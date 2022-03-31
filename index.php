@@ -109,15 +109,16 @@ function apiCall(){
     global $url;
     global $access_token;
     $bib_url = $url.'bibs';
-    // cURL defaults to GET
-    $ch = curl_init($bib_url);
+    // cURL defaults to GET;
     $request_headers = array(
-        'deleted: false',
-        'suppressed: false',
-        'createdDate: [2021-04-02T19:20:28Z,]',
-        'fields: title,author,publishYear',
         'Authorization: Bearer '.$access_token
     );
+    $params = array('limit' => 10,
+        'deleted' => 'false',
+        'fields' => 'title,author,publishYear',
+        'createdDate' => '[2021-04-02T19:20:28Z,]');
+    $bib_url .= ($params ? '?'.http_build_query($params) : '');
+    $ch = curl_init($bib_url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($ch);
