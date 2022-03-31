@@ -58,7 +58,8 @@ $url = 'https://wncln.wncln.org/iii/sierra-api/v6/';
 $access_token = "";
 getAccessToken();
 if($access_token != ""){
-    apiCall();
+    // apiCall();
+    getPatronIdByBarcode("MeowMeowMeow");
 }
 
 /*
@@ -125,6 +126,31 @@ function apiCall(){
     curl_close($ch);
     echo $result;
 }
+    
+function getPatronIdByBarcode($barcode){
+    global $url;
+    global $access_token;
+    $findPatron = $url."patrons/find";
+    $request_headers = array(
+        'Authorization: Bearer '.$access_token
+    );
+    $params = array(
+        //'varFieldTag' => 'b',
+        //'varFieldContent' => $barcode,
+        'varFieldTag' => 'b',
+        'varFieldContent' => $barcode,
+        'fields' => 'id,names,homeLibraryCode'
+    );
+    $findPatron .= ($params ? '?'.http_build_query($params) : '');
+    $ch = curl_init($findPatron);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    $id = json_decode($result)->id;
+    echo $result;
+    printf("<br><br><b>Here's the ID : %s</b>", $id);
+}    
 ?>
 </body>
 </html>
